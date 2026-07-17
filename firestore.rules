@@ -11,16 +11,30 @@ service cloud.firestore {
     match /tournaments/{tid} {
       allow read: if true;
       allow create: if request.resource.data.pinHash is string;
-      allow update, delete: if request.resource.data._pinHash == resource.data.pinHash
-                             || request.resource.data.get('_pinHash', '') == resource.data.pinHash;
+      // The data layer stamps _pinHash onto the existing document via an
+      // update() call (checked against the incoming request payload) BEFORE
+      // issuing deleteDoc(). On delete, request.resource is null, so the
+      // delete rule must instead verify the stamp already present on the
+      // existing document (resource.data), which was just written by the
+      // gated update above.
+      allow update: if request.resource.data._pinHash == resource.data.pinHash;
+      allow delete: if resource.data._pinHash == resource.data.pinHash;
 
       match /players/{pid} {
         allow read: if true;
-        allow write: if hasPin(tid);
+        allow create: if hasPin(tid);
+        allow update: if hasPin(tid);
+        // Same update-then-delete pattern as the parent tournament: the
+        // caller updates _pinHash on this doc first (gated by hasPin), then
+        // deletes it, so the delete check compares the existing doc's
+        // stamped _pinHash against the parent tournament's pinHash.
+        allow delete: if resource.data._pinHash == parentPin(tid);
       }
       match /matches/{mid} {
         allow read: if true;
-        allow write: if hasPin(tid);
+        allow create: if hasPin(tid);
+        allow update: if hasPin(tid);
+        allow delete: if resource.data._pinHash == parentPin(tid);
       }
     }
   }

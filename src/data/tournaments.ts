@@ -19,7 +19,7 @@ export async function createTournament(input: {
   const ref = await addDoc(col, {
     name: input.name, game: input.game, format: input.format,
     scoring: input.scoring, pinHash, status: "active",
-    pin: undefined, // never store plaintext
+    // plaintext pin is intentionally never written
     createdAt: serverTimestamp(),
   });
   const batch = writeBatch(db);
