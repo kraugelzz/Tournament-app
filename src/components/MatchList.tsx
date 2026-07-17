@@ -14,7 +14,9 @@ export function MatchList(props: {
   matches: Match[];
   isReferee: boolean;
   pinHash?: string;
+  allowDraw?: boolean;
 }) {
+  const allowDraw = props.allowDraw !== false;
   const { t } = useTranslation();
   const rounds = [...new Set(props.matches.map((m) => m.round))].sort((a, b) => a - b);
 
@@ -64,8 +66,10 @@ export function MatchList(props: {
                       <>
                         <Button variant={m.result === "p1win" ? "primary" : "ghost"}
                           onClick={() => update(m, "p1win")}>◀ {t("matches.p1win")}</Button>
-                        <Button variant={m.result === "draw" ? "primary" : "ghost"}
-                          onClick={() => update(m, "draw")}>{t("matches.draw")}</Button>
+                        {allowDraw && (
+                          <Button variant={m.result === "draw" ? "primary" : "ghost"}
+                            onClick={() => update(m, "draw")}>{t("matches.draw")}</Button>
+                        )}
                         <Button variant={m.result === "p2win" ? "primary" : "ghost"}
                           onClick={() => update(m, "p2win")}>{t("matches.p2win")} ▶</Button>
                         <span style={{ color: "var(--text-muted)" }}>| {t("matches.rawScore")}:</span>

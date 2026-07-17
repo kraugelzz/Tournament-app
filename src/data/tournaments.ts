@@ -127,7 +127,7 @@ export async function generateKnockout(
   const r1 = knockoutBracket(players);
   const batch = writeBatch(db);
   for (const m of r1) {
-    const ref = doc(collection(db, "tournaments", tid, "matches"));
+    const ref = doc(db, "tournaments", tid, "matches", `${m.bracket}-r${m.round}-s${m.slot}`);
     batch.set(ref, {
       round: m.round, slot: m.slot, bracket: m.bracket,
       player1Id: m.player1Id, player2Id: m.player2Id, result: m.result,
@@ -144,7 +144,7 @@ export async function advanceKnockoutRound(
   if (next.length === 0) return;
   const batch = writeBatch(db);
   for (const m of next) {
-    const ref = doc(collection(db, "tournaments", tid, "matches"));
+    const ref = doc(db, "tournaments", tid, "matches", `${m.bracket}-r${m.round}-s${m.slot}`);
     batch.set(ref, {
       round: m.round, slot: m.slot, bracket: m.bracket,
       player1Id: m.player1Id, player2Id: m.player2Id, result: m.result,

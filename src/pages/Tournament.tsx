@@ -121,7 +121,7 @@ export function Tournament() {
               </div>
             )}
             <MatchList tid={tour.id} players={players} matches={matches}
-              isReferee={ref.isReferee} pinHash={pinHash} />
+              isReferee={ref.isReferee} pinHash={pinHash} allowDraw={tour.format !== "knockout"} />
           </div>
         )}
 
