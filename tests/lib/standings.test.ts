@@ -37,11 +37,11 @@ describe("computeStandings", () => {
   });
 
   it("breaks a two-way tie by head-to-head", () => {
-    // A and B both 1 point; A beat B directly -> A ranked above B.
+    // A and B both 1 point (C sits at 0, outside the tie group);
+    // A beat B directly -> A ranked above B.
     const matches: Match[] = [
       m({ id: "1", player1Id: "a", player2Id: "b", result: "p1win" }),
       m({ id: "2", player1Id: "b", player2Id: "c", result: "p1win" }),
-      m({ id: "3", player1Id: "a", player2Id: "c", result: "p2win" }),
     ];
     const s = computeStandings(players, matches, scoring);
     const a = s.find((x) => x.playerId === "a")!;
@@ -53,5 +53,24 @@ describe("computeStandings", () => {
   it("assigns equal rank when fully tied", () => {
     const s = computeStandings(players, [], scoring);
     expect(s.every((x) => x.rank === 1)).toBe(true);
+  });
+
+  it("does not apply head-to-head in a 3-way beat cycle (shares rank instead)", () => {
+    // A beat B, B beat C, C beat A: all equal points, equal (zero) rawFor.
+    // Head-to-head is non-transitive here, so it must not be used for a 3-way tie.
+    const matches: Match[] = [
+      m({ id: "1", player1Id: "a", player2Id: "b", result: "p1win" }),
+      m({ id: "2", player1Id: "b", player2Id: "c", result: "p1win" }),
+      m({ id: "3", player1Id: "c", player2Id: "a", result: "p1win" }),
+    ];
+    const s = computeStandings(players, matches, scoring);
+    const a = s.find((x) => x.playerId === "a")!;
+    const b = s.find((x) => x.playerId === "b")!;
+    const c = s.find((x) => x.playerId === "c")!;
+    expect(a.points).toBe(b.points);
+    expect(b.points).toBe(c.points);
+    expect(a.rank).toBe(1);
+    expect(b.rank).toBe(1);
+    expect(c.rank).toBe(1);
   });
 });

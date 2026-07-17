@@ -79,8 +79,12 @@ export function computeStandings(
 
   const cmp = (a: Standing, b: Standing): number => {
     if (b.points !== a.points) return b.points - a.points;
-    const h2h = headToHead(a.playerId, b.playerId);
-    if (h2h !== 0) return -h2h; // a above b when h2h positive
+    // Head-to-head only applies when exactly two players share these points.
+    const tieGroupSize = list.filter((s) => s.points === a.points).length;
+    if (tieGroupSize === 2) {
+      const h2h = headToHead(a.playerId, b.playerId);
+      if (h2h !== 0) return -h2h; // a above b when h2h positive
+    }
     if (b.rawFor !== a.rawFor) return b.rawFor - a.rawFor;
     return 0;
   };
