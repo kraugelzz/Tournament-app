@@ -5,6 +5,8 @@ import {
 import { db } from "../firebase";
 import { hashPin } from "../lib/pin";
 import { roundRobin } from "../lib/roundRobin";
+import { swissPair } from "../lib/swiss";
+import { knockoutBracket, advanceKnockout } from "../lib/knockout";
 import type {
   GameId, Format, Scoring, Tournament, Player, Match, MatchResult,
 } from "../types";
@@ -97,6 +99,55 @@ export async function generateRoundRobin(
     batch.set(ref, {
       round: p.round, player1Id: p.player1Id, player2Id: p.player2Id,
       result: p.player2Id === null ? "p1win" : "pending",
+      _pinHash: pinHash,
+    });
+  }
+  await batch.commit();
+}
+
+export async function generateSwissRound(
+  tid: string, pinHash: string, players: Player[], matches: Match[], scoring: Scoring
+): Promise<void> {
+  const pairings = swissPair(players, matches, scoring);
+  const batch = writeBatch(db);
+  for (const p of pairings) {
+    const ref = doc(collection(db, "tournaments", tid, "matches"));
+    batch.set(ref, {
+      round: p.round, player1Id: p.player1Id, player2Id: p.player2Id,
+      result: p.player2Id === null ? "p1win" : "pending",
+      _pinHash: pinHash,
+    });
+  }
+  await batch.commit();
+}
+
+export async function generateKnockout(
+  tid: string, pinHash: string, players: Player[]
+): Promise<void> {
+  const r1 = knockoutBracket(players);
+  const batch = writeBatch(db);
+  for (const m of r1) {
+    const ref = doc(collection(db, "tournaments", tid, "matches"));
+    batch.set(ref, {
+      round: m.round, slot: m.slot, bracket: m.bracket,
+      player1Id: m.player1Id, player2Id: m.player2Id, result: m.result,
+      _pinHash: pinHash,
+    });
+  }
+  await batch.commit();
+}
+
+export async function advanceKnockoutRound(
+  tid: string, pinHash: string, players: Player[], matches: Match[]
+): Promise<void> {
+  const next = advanceKnockout(players, matches);
+  if (next.length === 0) return;
+  const batch = writeBatch(db);
+  for (const m of next) {
+    const ref = doc(collection(db, "tournaments", tid, "matches"));
+    batch.set(ref, {
+      round: m.round, slot: m.slot, bracket: m.bracket,
+      player1Id: m.player1Id, player2Id: m.player2Id, result: m.result,
       _pinHash: pinHash,
     });
   }
