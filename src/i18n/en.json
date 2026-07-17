@@ -20,8 +20,8 @@
   "new.format": "Pairing format",
   "new.format.free": "Free entry",
   "new.format.round-robin": "Round robin",
-  "new.format.swiss": "Swiss (coming soon)",
-  "new.format.knockout": "Knockout (coming soon)",
+  "new.format.swiss": "Swiss",
+  "new.format.knockout": "Knockout",
   "new.scoring": "Points (win / draw / loss)",
   "new.pin": "Referee PIN",
   "new.players": "Player names (one per line, or paste a list)",
@@ -34,6 +34,7 @@
   "tab.standings": "Standings",
   "tab.matches": "Matches",
   "tab.players": "Players",
+  "tab.bracket": "Bracket",
   "standings.rank": "Rank",
   "standings.name": "Name",
   "standings.played": "P",
@@ -53,6 +54,8 @@
   "matches.setResult": "Set result",
   "matches.rawScore": "Raw score",
   "matches.generate": "Generate schedule",
+  "matches.generateSwiss": "Create next round",
+  "matches.generateKnockout": "Generate bracket",
   "matches.addMatch": "Add match",
   "matches.empty": "No matches yet",
   "players.add": "Add player",
@@ -69,5 +72,8 @@
   "tournament.deleteConfirm": "Type the tournament name to confirm deletion",
   "common.cancel": "Cancel",
   "common.save": "Save",
-  "common.confirm": "Confirm"
+  "common.confirm": "Confirm",
+  "bracket.third": "Third place",
+  "bracket.round": "Round {{n}}",
+  "bracket.champion": "Champion"
 }

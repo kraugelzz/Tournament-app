@@ -68,8 +68,8 @@ export function NewTournament() {
         <select value={format} onChange={(e) => setFormat(e.target.value as Format)} className="input">
           <option value="free">{t("new.format.free")}</option>
           <option value="round-robin">{t("new.format.round-robin")}</option>
-          <option value="swiss" disabled>{t("new.format.swiss")}</option>
-          <option value="knockout" disabled>{t("new.format.knockout")}</option>
+          <option value="swiss">{t("new.format.swiss")}</option>
+          <option value="knockout">{t("new.format.knockout")}</option>
         </select>
       </label>
 

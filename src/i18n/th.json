@@ -20,8 +20,8 @@
   "new.format": "ระบบจับคู่",
   "new.format.free": "บันทึกอิสระ",
   "new.format.round-robin": "พบกันหมด",
-  "new.format.swiss": "สวิส (เร็ว ๆ นี้)",
-  "new.format.knockout": "น็อกเอาต์ (เร็ว ๆ นี้)",
+  "new.format.swiss": "สวิส",
+  "new.format.knockout": "น็อกเอาต์",
   "new.scoring": "คะแนน (ชนะ / เสมอ / แพ้)",
   "new.pin": "รหัสกรรมการ (PIN)",
   "new.players": "รายชื่อผู้เข้าแข่ง (พิมพ์ทีละบรรทัด หรือวางทั้งชุด)",
@@ -34,6 +34,7 @@
   "tab.standings": "ตารางคะแนน",
   "tab.matches": "ผลการแข่ง",
   "tab.players": "ผู้เข้าแข่ง",
+  "tab.bracket": "สายแข่ง",
   "standings.rank": "อันดับ",
   "standings.name": "ชื่อ",
   "standings.played": "แข่ง",
@@ -53,6 +54,8 @@
   "matches.setResult": "บันทึกผล",
   "matches.rawScore": "แต้มดิบ",
   "matches.generate": "สร้างตารางแข่ง",
+  "matches.generateSwiss": "สร้างรอบถัดไป",
+  "matches.generateKnockout": "สร้างสายแข่ง",
   "matches.addMatch": "เพิ่มแมตช์",
   "matches.empty": "ยังไม่มีแมตช์",
   "players.add": "เพิ่มผู้เข้าแข่ง",
@@ -69,5 +72,8 @@
   "tournament.deleteConfirm": "พิมพ์ชื่อรายการเพื่อยืนยันการลบ",
   "common.cancel": "ยกเลิก",
   "common.save": "บันทึก",
-  "common.confirm": "ยืนยัน"
+  "common.confirm": "ยืนยัน",
+  "bracket.third": "ชิงที่ 3",
+  "bracket.round": "รอบ {{n}}",
+  "bracket.champion": "ผู้ชนะเลิศ"
 }

@@ -5,14 +5,17 @@ import {
   watchTournament, watchPlayers, watchMatches,
   generateRoundRobin, setMatchResult, addPlayer, removePlayer,
   setTournamentStatus, deleteTournament,
+  generateSwissRound, generateKnockout, advanceKnockoutRound,
 } from "../data/tournaments";
 import { useRefereeMode } from "../hooks/useRefereeMode";
 import { RefereeGate } from "../components/RefereeGate";
 import { StandingsTable } from "../components/StandingsTable";
 import { MatchList } from "../components/MatchList";
+import { Bracket } from "../components/Bracket";
+import { Button } from "../components/ui";
 import type { Tournament as T, Player, Match } from "../types";
 
-type Tab = "standings" | "matches" | "players";
+type Tab = "standings" | "matches" | "players" | "bracket";
 
 export function Tournament() {
   const { t } = useTranslation();
@@ -33,6 +36,16 @@ export function Tournament() {
   }, [tournamentId]);
 
   const ref = useRefereeMode(tournamentId ?? "", tour?.pinHash);
+
+  useEffect(() => {
+    if (tour?.format === "knockout") setTab("bracket");
+  }, [tour?.id, tour?.format]);
+
+  useEffect(() => {
+    if (!tour || tour.format !== "knockout" || !ref.isReferee || !ref.pinHash) return;
+    if (matches.length === 0) return;
+    advanceKnockoutRound(tour.id, ref.pinHash, players, matches).catch(() => {});
+  }, [tour, ref.isReferee, ref.pinHash, players, matches]);
 
   const hasMatchFor = useMemo(() => {
     const ids = new Set<string>();
@@ -66,7 +79,10 @@ export function Tournament() {
       </div>
 
       <nav style={{ display: "flex", gap: 8, marginTop: 8 }}>
-        {(["standings", "matches", "players"] as Tab[]).map((tb) => (
+        {(tour.format === "knockout"
+          ? (["bracket", "matches", "players"] as Tab[])
+          : (["standings", "matches", "players"] as Tab[])
+        ).map((tb) => (
           <button key={tb} onClick={() => setTab(tb)} style={{ fontWeight: tab === tb ? 700 : 400 }}>
             {t(`tab.${tb}`)}
           </button>
@@ -78,6 +94,8 @@ export function Tournament() {
           <StandingsTable players={players} matches={matches} scoring={tour.scoring} />
         )}
 
+        {tab === "bracket" && <Bracket players={players} matches={matches} />}
+
         {tab === "matches" && (
           <div>
             {ref.isReferee && (
@@ -87,6 +105,18 @@ export function Tournament() {
                 )}
                 {tour.format === "free" && (
                   <FreeMatchAdder players={players} onAdd={addFreeMatch} />
+                )}
+                {tour.format === "swiss" && (
+                  <Button variant="primary" onClick={() =>
+                    ref.pinHash && generateSwissRound(tour.id, ref.pinHash, players, matches, tour.scoring)}>
+                    {t("matches.generateSwiss")}
+                  </Button>
+                )}
+                {tour.format === "knockout" && matches.length === 0 && (
+                  <Button variant="primary" onClick={() =>
+                    ref.pinHash && generateKnockout(tour.id, ref.pinHash, players)}>
+                    {t("matches.generateKnockout")}
+                  </Button>
                 )}
               </div>
             )}
