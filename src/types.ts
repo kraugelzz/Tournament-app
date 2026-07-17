@@ -25,6 +25,8 @@ export interface Match {
   result: MatchResult;
   rawScore1?: number;
   rawScore2?: number;
+  bracket?: "main" | "third";
+  slot?: number;
 }
 
 export interface Tournament {
