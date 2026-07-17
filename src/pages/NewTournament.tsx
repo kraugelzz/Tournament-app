@@ -6,6 +6,7 @@ import { parsePlayers } from "../lib/parsePlayers";
 import { createTournament } from "../data/tournaments";
 import { DEFAULT_SCORING } from "../types";
 import type { GameId, Format } from "../types";
+import { Card, Button } from "../components/ui";
 
 export function NewTournament() {
   const { t } = useTranslation();
@@ -50,21 +51,21 @@ export function NewTournament() {
   };
 
   const num = (v: number, set: (n: number) => void) => (
-    <input type="number" step="0.5" value={v}
-      style={{ width: 60 }}
+    <input type="number" step="0.5" value={v} className="input"
+      style={{ width: 70, display: "inline-block" }}
       onChange={(e) => set(parseFloat(e.target.value) || 0)} />
   );
 
   return (
-    <div>
-      <h2>{t("new.title")} — {t(`game.${game}`)}</h2>
+    <Card>
+      <h2 style={{ marginTop: 0 }}>{t("new.title")} — {t(`game.${game}`)}</h2>
 
       <label style={{ display: "block", marginTop: 12 }}>{t("new.name")}
-        <input value={name} onChange={(e) => setName(e.target.value)} style={{ display: "block", width: "100%" }} />
+        <input value={name} onChange={(e) => setName(e.target.value)} className="input" />
       </label>
 
       <label style={{ display: "block", marginTop: 12 }}>{t("new.format")}
-        <select value={format} onChange={(e) => setFormat(e.target.value as Format)} style={{ display: "block" }}>
+        <select value={format} onChange={(e) => setFormat(e.target.value as Format)} className="input">
           <option value="free">{t("new.format.free")}</option>
           <option value="round-robin">{t("new.format.round-robin")}</option>
           <option value="swiss" disabled>{t("new.format.swiss")}</option>
@@ -77,19 +78,19 @@ export function NewTournament() {
       </div>
 
       <label style={{ display: "block", marginTop: 12 }}>{t("new.pin")}
-        <input type="password" value={pin} onChange={(e) => setPin(e.target.value)} style={{ display: "block" }} />
+        <input type="password" value={pin} onChange={(e) => setPin(e.target.value)} className="input" />
       </label>
 
       <label style={{ display: "block", marginTop: 12 }}>{t("new.players")}
-        <textarea value={raw} onChange={(e) => setRaw(e.target.value)} rows={8} style={{ display: "block", width: "100%" }} />
+        <textarea value={raw} onChange={(e) => setRaw(e.target.value)} rows={8} className="input" />
       </label>
-      <div style={{ color: "#666" }}>{t("new.playerCount", { count: parsed.names.length })}</div>
+      <div style={{ color: "var(--text-muted)" }}>{t("new.playerCount", { count: parsed.names.length })}</div>
 
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
+      {error && <p style={{ color: "var(--danger)" }}>{error}</p>}
 
-      <button disabled={busy} onClick={submit} style={{ marginTop: 12 }}>
+      <Button variant="primary" disabled={busy} onClick={submit} style={{ marginTop: 12 }}>
         {t("new.submit")}
-      </button>
-    </div>
+      </Button>
+    </Card>
   );
 }

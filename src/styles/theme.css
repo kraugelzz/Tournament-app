@@ -37,3 +37,18 @@ a { color: var(--primary); text-decoration: none; }
 h1,h2,h3,h4 { font-weight: 700; letter-spacing: -.01em; }
 table { border-collapse: collapse; width: 100%; }
 input, select, textarea, button { font: inherit; }
+
+.lift { transition: transform .15s, box-shadow .15s; }
+.lift:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(60,40,20,.12); }
+
+.input {
+  display: block; width: 100%; padding: 8px 12px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text);
+}
+
+.zebra tbody tr:nth-child(even) { background: var(--surface-2); }
+.sticky-header thead th {
+  position: sticky; top: 0; background: var(--surface); z-index: 1;
+}
+.tabular-nums { font-variant-numeric: tabular-nums; }

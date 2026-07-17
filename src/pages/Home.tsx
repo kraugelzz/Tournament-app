@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { GAMES } from "../lib/games";
 import { watchTournamentsByGame } from "../data/tournaments";
 import type { GameId } from "../types";
+import { Card, Badge } from "../components/ui";
 
 export function Home() {
   const { t } = useTranslation();
@@ -20,24 +21,24 @@ export function Home() {
 
   return (
     <div>
-      <p>{t("home.subtitle")}</p>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 12 }}>
-        {GAMES.map((g) => (
-          <Link
-            key={g.id}
-            to={`/${g.id}`}
-            style={{
-              display: "block", padding: 16, borderRadius: 12, border: "1px solid #ddd",
-              textDecoration: "none", color: "inherit", textAlign: "center",
-            }}
-          >
-            <div style={{ fontSize: 32 }}>{g.icon}</div>
-            <div style={{ fontWeight: 600, marginTop: 8 }}>{t(g.labelKey)}</div>
-            <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>
-              {t("home.activeCount", { count: counts[g.id] ?? 0 })}
-            </div>
-          </Link>
-        ))}
+      <p style={{ color: "var(--text-muted)" }}>{t("home.subtitle")}</p>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 12 }}>
+        {GAMES.map((g) => {
+          const count = counts[g.id] ?? 0;
+          return (
+            <Link key={g.id} to={`/${g.id}`} className="lift" style={{ textDecoration: "none", color: "inherit" }}>
+              <Card style={{ textAlign: "center", cursor: "pointer" }}>
+                <div style={{ fontSize: 40 }}>{g.icon}</div>
+                <div style={{ fontWeight: 600, marginTop: 8 }}>{t(g.labelKey)}</div>
+                <div style={{ marginTop: 8 }}>
+                  <Badge tone={count > 0 ? "success" : "muted"}>
+                    {t("home.activeCount", { count })}
+                  </Badge>
+                </div>
+              </Card>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

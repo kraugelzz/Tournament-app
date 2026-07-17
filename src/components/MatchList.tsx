@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { setMatchResult } from "../data/tournaments";
 import type { Player, Match, MatchResult } from "../types";
+import { Card, Button, Badge } from "./ui";
 
 function nameOf(players: Player[], id: string | null, byeLabel: string): string {
   if (id === null) return byeLabel;
@@ -34,49 +35,62 @@ export function MatchList(props: {
     });
   };
 
-  if (props.matches.length === 0) return <p style={{ color: "#666" }}>{t("matches.empty")}</p>;
+  if (props.matches.length === 0) return <p style={{ color: "var(--text-muted)" }}>{t("matches.empty")}</p>;
 
   return (
     <div>
       {rounds.map((r) => (
         <section key={r} style={{ marginTop: 12 }}>
           <h4>{t("matches.round", { round: r })}</h4>
-          {props.matches.filter((m) => m.round === r).map((m) => (
-            <div key={m.id} style={{ padding: 8, borderBottom: "1px solid #eee" }}>
-              <div>
-                {nameOf(props.players, m.player1Id, t("matches.bye"))} {t("matches.vs")}{" "}
-                {nameOf(props.players, m.player2Id, t("matches.bye"))}
-              </div>
-              {m.player2Id !== null && (
-                <div style={{ marginTop: 4 }}>
-                  {props.isReferee ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {props.matches.filter((m) => m.round === r).map((m) => (
+              <Card key={m.id} style={{ padding: 10 }}>
+                <div>
+                  {m.player2Id === null ? (
                     <span>
-                      <button onClick={() => update(m, "p1win")}
-                        style={{ fontWeight: m.result === "p1win" ? 700 : 400 }}>◀ {t("matches.p1win")}</button>{" "}
-                      <button onClick={() => update(m, "draw")}
-                        style={{ fontWeight: m.result === "draw" ? 700 : 400 }}>{t("matches.draw")}</button>{" "}
-                      <button onClick={() => update(m, "p2win")}
-                        style={{ fontWeight: m.result === "p2win" ? 700 : 400 }}>{t("matches.p2win")} ▶</button>
-                      {" | "}{t("matches.rawScore")}:{" "}
-                      <input type="number" style={{ width: 60 }} defaultValue={m.rawScore1 ?? ""}
-                        onBlur={(e) => updateRaw(m, 1, parseFloat(e.target.value) || 0)} />
-                      {" - "}
-                      <input type="number" style={{ width: 60 }} defaultValue={m.rawScore2 ?? ""}
-                        onBlur={(e) => updateRaw(m, 2, parseFloat(e.target.value) || 0)} />
+                      {nameOf(props.players, m.player1Id, t("matches.bye"))} {t("matches.vs")}{" "}
+                      <Badge tone="muted">{t("matches.bye")}</Badge>
                     </span>
                   ) : (
-                    <span style={{ color: "#555" }}>
-                      {m.result === "pending" ? t("matches.pending")
-                        : m.result === "draw" ? t("matches.draw")
-                        : m.result === "p1win" ? `◀ ${nameOf(props.players, m.player1Id, "")}`
-                        : `${nameOf(props.players, m.player2Id, "")} ▶`}
-                      {typeof m.rawScore1 === "number" && ` (${m.rawScore1} - ${m.rawScore2 ?? 0})`}
-                    </span>
+                    <>
+                      {nameOf(props.players, m.player1Id, t("matches.bye"))} {t("matches.vs")}{" "}
+                      {nameOf(props.players, m.player2Id, t("matches.bye"))}
+                    </>
                   )}
                 </div>
-              )}
-            </div>
-          ))}
+                {m.player2Id !== null && (
+                  <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                    {props.isReferee ? (
+                      <>
+                        <Button variant={m.result === "p1win" ? "primary" : "ghost"}
+                          onClick={() => update(m, "p1win")}>◀ {t("matches.p1win")}</Button>
+                        <Button variant={m.result === "draw" ? "primary" : "ghost"}
+                          onClick={() => update(m, "draw")}>{t("matches.draw")}</Button>
+                        <Button variant={m.result === "p2win" ? "primary" : "ghost"}
+                          onClick={() => update(m, "p2win")}>{t("matches.p2win")} ▶</Button>
+                        <span style={{ color: "var(--text-muted)" }}>| {t("matches.rawScore")}:</span>
+                        <input type="number" className="input" style={{ width: 60, display: "inline-block" }}
+                          defaultValue={m.rawScore1 ?? ""}
+                          onBlur={(e) => updateRaw(m, 1, parseFloat(e.target.value) || 0)} />
+                        <span>-</span>
+                        <input type="number" className="input" style={{ width: 60, display: "inline-block" }}
+                          defaultValue={m.rawScore2 ?? ""}
+                          onBlur={(e) => updateRaw(m, 2, parseFloat(e.target.value) || 0)} />
+                      </>
+                    ) : (
+                      <span style={{ color: "var(--text-muted)" }}>
+                        {m.result === "pending" ? t("matches.pending")
+                          : m.result === "draw" ? t("matches.draw")
+                          : m.result === "p1win" ? `◀ ${nameOf(props.players, m.player1Id, "")}`
+                          : `${nameOf(props.players, m.player2Id, "")} ▶`}
+                        {typeof m.rawScore1 === "number" && ` (${m.rawScore1} - ${m.rawScore2 ?? 0})`}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </Card>
+            ))}
+          </div>
         </section>
       ))}
     </div>
