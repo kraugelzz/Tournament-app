@@ -21,7 +21,16 @@ export function RefereeGate(props: {
   }
 
   if (!open) {
-    return <button onClick={() => setOpen(true)}>{t("referee.enter")}</button>;
+    return (
+      <button
+        onClick={() => {
+          setError(false);
+          setOpen(true);
+        }}
+      >
+        {t("referee.enter")}
+      </button>
+    );
   }
 
   return (
@@ -30,7 +39,10 @@ export function RefereeGate(props: {
         type="password"
         placeholder={t("referee.prompt")}
         value={pin}
-        onChange={(e) => setPin(e.target.value)}
+        onChange={(e) => {
+          setPin(e.target.value);
+          setError(false);
+        }}
       />
       <button
         onClick={async () => {

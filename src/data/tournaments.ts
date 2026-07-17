@@ -1,6 +1,6 @@
 import {
   collection, doc, addDoc, setDoc, deleteDoc, updateDoc, writeBatch,
-  onSnapshot, query, where, serverTimestamp,
+  onSnapshot, query, where, serverTimestamp, getDocs,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { hashPin } from "../lib/pin";
@@ -114,9 +114,6 @@ export async function addPlayer(
 export async function removePlayer(
   tid: string, pinHash: string, playerId: string
 ): Promise<void> {
-  // _pinHash must be attached to satisfy rules on delete via a marker write is not
-  // possible for delete; rules allow delete when the doc already carries the pin.
-  // We instead update then delete to keep it simple.
   await updateDoc(doc(db, "tournaments", tid, "players", playerId), { _pinHash: pinHash });
   await deleteDoc(doc(db, "tournaments", tid, "players", playerId));
 }
@@ -128,6 +125,15 @@ export async function setTournamentStatus(
 }
 
 export async function deleteTournament(tid: string, pinHash: string): Promise<void> {
+  const [playersSnap, matchesSnap] = await Promise.all([
+    getDocs(collection(db, "tournaments", tid, "players")),
+    getDocs(collection(db, "tournaments", tid, "matches")),
+  ]);
+  const batch = writeBatch(db);
+  playersSnap.docs.forEach((d) => batch.delete(d.ref));
+  matchesSnap.docs.forEach((d) => batch.delete(d.ref));
+  await batch.commit();
+
   await updateDoc(doc(db, "tournaments", tid), { _pinHash: pinHash });
   await deleteDoc(doc(db, "tournaments", tid));
 }

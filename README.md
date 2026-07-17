@@ -15,5 +15,8 @@
 1. `npm run build`
 2. `firebase deploy` (deploys hosting + firestore rules)
 
+## Security
+PIN ป้องกันการแก้ไขข้อมูลโดยไม่ตั้งใจผ่านหน้าเว็บเท่านั้น เนื่องจากข้อมูลทัวร์นาเมนต์ (รวมถึง PIN hash) สามารถอ่านได้แบบสาธารณะ กฎ Firestore ในโปรเจกต์นี้จึงไม่ได้ให้การป้องกันฝั่งเซิร์ฟเวอร์ที่แข็งแรง ผู้ที่มีความรู้ทางเทคนิคสามารถข้ามการป้องกันนี้ได้ หากต้องการความปลอดภัยที่แท้จริง ควรเพิ่ม Firebase Auth (พิจารณาใน Phase 2)
+
 ## Phase 2 (not yet built)
 Swiss and knockout pairing formats.

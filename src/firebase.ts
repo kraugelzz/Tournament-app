@@ -3,6 +3,7 @@ import {
   initializeFirestore,
   persistentLocalCache,
   persistentMultipleTabManager,
+  memoryLocalCache,
 } from "firebase/firestore";
 
 const app = initializeApp({
@@ -14,7 +15,12 @@ const app = initializeApp({
   appId: import.meta.env.VITE_FB_APP_ID,
 });
 
+const localCache =
+  typeof indexedDB !== "undefined"
+    ? persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+    : memoryLocalCache();
+
 export const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+  localCache,
   ignoreUndefinedProperties: true,
 });
