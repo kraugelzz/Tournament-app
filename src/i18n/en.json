@@ -31,6 +31,7 @@
   "new.error.pin": "Please set a PIN",
   "new.error.range": "Players must be between 1 and 50",
   "new.error.duplicate": "Duplicate names: {{names}} — confirm to continue",
+  "new.error.save": "Couldn't save — the database (Firebase) isn't configured or is unreachable.",
   "tab.standings": "Standings",
   "tab.matches": "Matches",
   "tab.players": "Players",

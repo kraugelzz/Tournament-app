@@ -45,6 +45,10 @@ export function NewTournament() {
         scoring: { win, draw, loss }, pin, playerNames: parsed.names,
       });
       navigate(`/${game}/${id}`);
+    } catch (e) {
+      // Most commonly: Firebase/Firestore isn't configured or is unreachable.
+      setError(t("new.error.save"));
+      console.error("createTournament failed:", e);
     } finally {
       setBusy(false);
     }
@@ -78,7 +82,9 @@ export function NewTournament() {
       </div>
 
       <label style={{ display: "block", marginTop: 12 }}>{t("new.pin")}
-        <input type="password" value={pin} onChange={(e) => setPin(e.target.value)} className="input" />
+        <input type="text" inputMode="numeric" autoComplete="off" name="tournament-pin"
+          value={pin} onChange={(e) => setPin(e.target.value)} className="input"
+          style={{ WebkitTextSecurity: "disc" } as React.CSSProperties} />
       </label>
 
       <label style={{ display: "block", marginTop: 12 }}>{t("new.players")}
