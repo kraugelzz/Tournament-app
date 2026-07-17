@@ -34,6 +34,7 @@ export interface Tournament {
   format: Format;
   scoring: Scoring;
   status: "active" | "finished";
+  pinHash?: string;
 }
 
 export const DEFAULT_SCORING: Scoring = { win: 1, draw: 0.5, loss: 0 };
