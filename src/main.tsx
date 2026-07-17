@@ -8,18 +8,22 @@ import { GameList } from "./pages/GameList";
 import { NewTournament } from "./pages/NewTournament";
 import { Tournament } from "./pages/Tournament";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    children: [
-      { index: true, element: <Home /> },
-      { path: ":game", element: <GameList /> },
-      { path: ":game/new", element: <NewTournament /> },
-      { path: ":game/:tournamentId", element: <Tournament /> },
-    ],
-  },
-]);
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <App />,
+      children: [
+        { index: true, element: <Home /> },
+        { path: ":game", element: <GameList /> },
+        { path: ":game/new", element: <NewTournament /> },
+        { path: ":game/:tournamentId", element: <Tournament /> },
+      ],
+    },
+  ],
+  // Serve correctly from the GitHub Pages subpath (import.meta.env.BASE_URL === base).
+  { basename: import.meta.env.BASE_URL }
+);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
