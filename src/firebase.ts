@@ -13,10 +13,12 @@ const app = initializeApp({
   appId: import.meta.env.VITE_FB_APP_ID ?? "1:290520374822:web:8d0729d874fee9b4c850e7",
 });
 
-// Default in-memory cache + default transport. A previous persistentLocalCache
-// setup caused writes to commit locally but never sync to the server; the
-// default config was verified to write and sync reliably from the target
-// environment, so we keep it simple.
+// Default in-memory cache (persistentLocalCache was blocking writes from
+// reaching the server). Force HTTP long-polling so write acknowledgements and
+// snapshot updates come back reliably over plain HTTPS on networks that stall
+// the streaming channel's receive path (which left commits unresolved and
+// listeners never firing).
 export const db = initializeFirestore(app, {
   ignoreUndefinedProperties: true,
+  experimentalForceLongPolling: true,
 });
