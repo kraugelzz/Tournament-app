@@ -12,8 +12,12 @@ import type {
   GameId, Format, Scoring, Tournament, Player, Match, MatchResult,
 } from "../types";
 
-const PROJECT = import.meta.env.VITE_FB_PROJECT_ID ?? "tournament-app-419dc";
-const KEY = import.meta.env.VITE_FB_API_KEY ?? "AIzaSyCLu9Cbe0Oc13SMRTT2LDf0zVrLWDPgLNc";
+// Hardcoded on purpose: these are public client identifiers (safe to ship),
+// and reading them from build-time env caused an empty projectId when the
+// GitHub Actions secrets were unset (env injected "" and `?? fallback` does not
+// catch empty strings), which broke every request with RESOURCE_PROJECT_INVALID.
+const PROJECT = "tournament-app-419dc";
+const KEY = "AIzaSyCLu9Cbe0Oc13SMRTT2LDf0zVrLWDPgLNc";
 const BASE = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents`;
 const DOC_PREFIX = `projects/${PROJECT}/databases/(default)/documents`;
 const POLL_MS = 4000;
