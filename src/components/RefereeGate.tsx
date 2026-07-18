@@ -36,13 +36,17 @@ export function RefereeGate(props: {
   return (
     <div>
       <input
-        type="password"
+        type="text"
+        inputMode="numeric"
+        autoComplete="off"
+        name="referee-pin"
         placeholder={t("referee.prompt")}
         value={pin}
         onChange={(e) => {
           setPin(e.target.value);
           setError(false);
         }}
+        style={{ WebkitTextSecurity: "disc" } as React.CSSProperties}
       />
       <button
         onClick={async () => {
