@@ -18,19 +18,25 @@ export async function createTournament(input: {
   pin: string; playerNames: string[];
 }): Promise<string> {
   const pinHash = await hashPin(input.pin);
-  const ref = await addDoc(col, {
+  // Pre-generate the doc id locally (no network needed) so we can navigate
+  // immediately. Firestore write promises only resolve on server ack, which
+  // hangs forever on networks that block the realtime channel — so we do NOT
+  // await the commit; with local persistence the data is applied instantly
+  // and syncs in the background.
+  const tRef = doc(col);
+  const batch = writeBatch(db);
+  batch.set(tRef, {
     name: input.name, game: input.game, format: input.format,
     scoring: input.scoring, pinHash, status: "active",
     // plaintext pin is intentionally never written
     createdAt: serverTimestamp(),
   });
-  const batch = writeBatch(db);
   input.playerNames.forEach((name, i) => {
-    const pRef = doc(collection(db, "tournaments", ref.id, "players"));
+    const pRef = doc(collection(db, "tournaments", tRef.id, "players"));
     batch.set(pRef, { name, seed: i + 1, _pinHash: pinHash });
   });
-  await batch.commit();
-  return ref.id;
+  batch.commit().catch((e) => console.error("createTournament sync failed:", e));
+  return tRef.id;
 }
 
 function stripPin<T extends { _pinHash?: string }>(data: T): Omit<T, "_pinHash"> {
