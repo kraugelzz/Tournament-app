@@ -40,13 +40,21 @@ export function NewTournament() {
     }
     setBusy(true);
     try {
-      const id = await createTournament({
-        name: name.trim(), game: game as GameId, format,
-        scoring: { win, draw, loss }, pin, playerNames: parsed.names,
-      });
+      // Guard against a write that never resolves (e.g. the network can't reach
+      // the backend), so the button doesn't hang silently forever.
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error("timeout")), 12000)
+      );
+      const id = await Promise.race([
+        createTournament({
+          name: name.trim(), game: game as GameId, format,
+          scoring: { win, draw, loss }, pin, playerNames: parsed.names,
+        }),
+        timeout,
+      ]);
       navigate(`/${game}/${id}`);
     } catch (e) {
-      // Most commonly: Firebase/Firestore isn't configured or is unreachable.
+      // Most commonly: Firestore is unreachable or the write timed out.
       setError(t("new.error.save"));
       console.error("createTournament failed:", e);
     } finally {

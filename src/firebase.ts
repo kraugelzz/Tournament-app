@@ -13,10 +13,12 @@ const app = initializeApp({
   appId: import.meta.env.VITE_FB_APP_ID ?? "1:290520374822:web:8d0729d874fee9b4c850e7",
 });
 
-// Default in-memory cache + default transport. persistentLocalCache was found
-// to block writes from reaching the server; this minimal setup matches the
-// configuration verified to write, sync, and receive acks reliably from the
-// target environment.
+// Default in-memory cache (persistentLocalCache was blocking writes from
+// reaching the server). Force HTTP long-polling: on networks that can't
+// complete the streaming channel's round-trip, the default transport leaves
+// write acknowledgements unresolved (create hangs). Long-polling uses the same
+// plain HTTPS path the REST API uses, which works on restrictive networks.
 export const db = initializeFirestore(app, {
   ignoreUndefinedProperties: true,
+  experimentalForceLongPolling: true,
 });
