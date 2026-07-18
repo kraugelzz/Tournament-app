@@ -48,6 +48,18 @@ export function watchTournamentsByGame(game: GameId, cb: (t: Tournament[]) => vo
   });
 }
 
+// One-time read of active-tournament counts per game for the home screen, so
+// the landing page doesn't hold open a live listener per game.
+export async function getActiveCountsByGame(): Promise<Record<string, number>> {
+  const snap = await getDocs(col);
+  const counts: Record<string, number> = {};
+  snap.forEach((d) => {
+    const t = d.data() as { game?: string; status?: string };
+    if (t.status === "active" && t.game) counts[t.game] = (counts[t.game] ?? 0) + 1;
+  });
+  return counts;
+}
+
 export function watchTournament(id: string, cb: (t: Tournament | null) => void) {
   return onSnapshot(doc(db, "tournaments", id), (d) => {
     cb(d.exists() ? ({ id: d.id, ...(d.data() as Omit<Tournament, "id">) }) : null);

@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { GAMES } from "../lib/games";
-import { watchTournamentsByGame } from "../data/tournaments";
-import type { GameId } from "../types";
+import { getActiveCountsByGame } from "../data/tournaments";
 import { Card, Badge } from "../components/ui";
 
 export function Home() {
@@ -11,12 +10,11 @@ export function Home() {
   const [counts, setCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    const unsubs = GAMES.map((g) =>
-      watchTournamentsByGame(g.id as GameId, (list) =>
-        setCounts((c) => ({ ...c, [g.id]: list.filter((x) => x.status === "active").length }))
-      )
-    );
-    return () => unsubs.forEach((u) => u());
+    let alive = true;
+    getActiveCountsByGame()
+      .then((c) => { if (alive) setCounts(c); })
+      .catch(() => {});
+    return () => { alive = false; };
   }, []);
 
   return (
