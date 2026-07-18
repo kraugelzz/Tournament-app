@@ -1,10 +1,5 @@
 import { initializeApp } from "firebase/app";
-import {
-  initializeFirestore,
-  persistentLocalCache,
-  persistentMultipleTabManager,
-  memoryLocalCache,
-} from "firebase/firestore";
+import { initializeFirestore } from "firebase/firestore";
 
 // Firebase web config is public client config (safe to ship in the bundle);
 // data access is protected by Firestore security rules, not by hiding these.
@@ -18,17 +13,10 @@ const app = initializeApp({
   appId: import.meta.env.VITE_FB_APP_ID ?? "1:290520374822:web:8d0729d874fee9b4c850e7",
 });
 
-const localCache =
-  typeof indexedDB !== "undefined"
-    ? persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-    : memoryLocalCache();
-
+// Default in-memory cache + default transport. A previous persistentLocalCache
+// setup caused writes to commit locally but never sync to the server; the
+// default config was verified to write and sync reliably from the target
+// environment, so we keep it simple.
 export const db = initializeFirestore(app, {
-  localCache,
   ignoreUndefinedProperties: true,
-  // Force HTTP long-polling instead of the WebChannel/gRPC-web stream. Many
-  // networks/proxies/firewalls block the streaming channel, which makes writes
-  // hang and cross-device sync silently fail; long-polling uses the same plain
-  // HTTPS path that works everywhere, at a small latency cost.
-  experimentalForceLongPolling: true,
 });
