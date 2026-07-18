@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { isGameId } from "../lib/games";
-import { watchTournamentsByGame } from "../data/tournaments";
+import { watchTournamentsByGame, deleteTournament } from "../data/tournaments";
+import { verifyPin, hashPin } from "../lib/pin";
 import type { GameId, Tournament } from "../types";
 import { Card, Button, Badge } from "../components/ui";
 
@@ -34,7 +35,10 @@ export function GameList() {
               display: "flex", alignItems: "center", gap: 8, justifyContent: "space-between",
             }}>
               <Link to={`/${game}/${x.id}`} style={{ color: "var(--text)", fontWeight: 600 }}>{x.name}</Link>
-              <Badge>{t(`new.format.${x.format}`)}</Badge>
+              <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Badge>{t(`new.format.${x.format}`)}</Badge>
+                <DeleteRowButton tournament={x} />
+              </span>
             </li>
           ))}
         </ul>
@@ -53,5 +57,60 @@ export function GameList() {
       <Section title={t("list.active")} items={active} />
       <Section title={t("list.finished")} items={finished} />
     </div>
+  );
+}
+
+// Per-row delete: reveals a PIN field; on a correct PIN the tournament (and its
+// players/matches) are deleted. The list refreshes on the next poll.
+function DeleteRowButton({ tournament }: { tournament: Tournament }) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const [pin, setPin] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  if (!open) {
+    return (
+      <Button onClick={() => setOpen(true)} style={{ padding: "4px 10px", fontSize: 13 }}>
+        {t("players.remove")}
+      </Button>
+    );
+  }
+
+  const confirm = async () => {
+    setError(null);
+    if (!tournament.pinHash) return;
+    setBusy(true);
+    try {
+      if (!(await verifyPin(pin, tournament.pinHash))) {
+        setError(t("referee.wrong"));
+        return;
+      }
+      await deleteTournament(tournament.id, await hashPin(pin));
+      // On success the row disappears when the list re-polls.
+    } catch {
+      setError(t("new.error.save"));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+      <input
+        type="text" inputMode="numeric" autoComplete="off" className="input"
+        placeholder={t("referee.prompt")} value={pin}
+        onChange={(e) => setPin(e.target.value)}
+        style={{ width: 90, WebkitTextSecurity: "disc" } as React.CSSProperties}
+      />
+      <Button variant="danger" disabled={busy} onClick={confirm} style={{ padding: "4px 10px", fontSize: 13 }}>
+        {t("common.confirm")}
+      </Button>
+      <Button onClick={() => { setOpen(false); setPin(""); setError(null); }}
+        style={{ padding: "4px 10px", fontSize: 13 }}>
+        {t("common.cancel")}
+      </Button>
+      {error && <span style={{ color: "var(--danger)", fontSize: 12 }}>{error}</span>}
+    </span>
   );
 }
