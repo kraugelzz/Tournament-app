@@ -26,8 +26,9 @@ const localCache =
 export const db = initializeFirestore(app, {
   localCache,
   ignoreUndefinedProperties: true,
-  // Auto-detect long-polling: falls back from the WebChannel/gRPC-web stream to
-  // HTTP long-polling on networks/proxies that block it, so writes actually reach
-  // the backend instead of hanging.
-  experimentalAutoDetectLongPolling: true,
+  // Force HTTP long-polling instead of the WebChannel/gRPC-web stream. Many
+  // networks/proxies/firewalls block the streaming channel, which makes writes
+  // hang and cross-device sync silently fail; long-polling uses the same plain
+  // HTTPS path that works everywhere, at a small latency cost.
+  experimentalForceLongPolling: true,
 });
