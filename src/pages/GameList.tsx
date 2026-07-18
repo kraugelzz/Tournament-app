@@ -22,7 +22,25 @@ export function GameList() {
   const active = list.filter((x) => x.status === "active");
   const finished = list.filter((x) => x.status === "finished");
 
-  const Section = ({ title, items }: { title: string; items: Tournament[] }) => (
+  return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <h2 style={{ margin: 0 }}>{t(`game.${game}`)}</h2>
+        <Link to={`/${game}/new`}>
+          <Button variant="primary">{t("list.new")}</Button>
+        </Link>
+      </div>
+      <Section title={t("list.active")} items={active} game={game} />
+      <Section title={t("list.finished")} items={finished} game={game} />
+    </div>
+  );
+}
+
+// Defined at module scope (not inside GameList) so the list isn't remounted on
+// every poll, which would reset an open delete/PIN prompt.
+function Section({ title, items, game }: { title: string; items: Tournament[]; game: string }) {
+  const { t } = useTranslation();
+  return (
     <Card style={{ marginTop: 16 }}>
       <h3 style={{ marginTop: 0 }}>{title}</h3>
       {items.length === 0 ? (
@@ -44,19 +62,6 @@ export function GameList() {
         </ul>
       )}
     </Card>
-  );
-
-  return (
-    <div>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <h2 style={{ margin: 0 }}>{t(`game.${game}`)}</h2>
-        <Link to={`/${game}/new`}>
-          <Button variant="primary">{t("list.new")}</Button>
-        </Link>
-      </div>
-      <Section title={t("list.active")} items={active} />
-      <Section title={t("list.finished")} items={finished} />
-    </div>
   );
 }
 
