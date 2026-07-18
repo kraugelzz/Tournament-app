@@ -11,6 +11,8 @@
   "game.boardgame": "Board Game",
   "home.subtitle": "Pick a game category to run a tournament",
   "home.activeCount": "{{count}} active",
+  "home.guide": "📖 User guide",
+  "home.credit": "Created by Apiwit Prakat",
   "list.active": "Active",
   "list.finished": "Finished",
   "list.empty": "No tournaments yet",

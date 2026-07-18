@@ -8,6 +8,7 @@ import { Home } from "./pages/Home";
 import { GameList } from "./pages/GameList";
 import { NewTournament } from "./pages/NewTournament";
 import { Tournament } from "./pages/Tournament";
+import { Help } from "./pages/Help";
 
 const router = createBrowserRouter(
   [
@@ -16,6 +17,7 @@ const router = createBrowserRouter(
       element: <App />,
       children: [
         { index: true, element: <Home /> },
+        { path: "help", element: <Help /> },
         { path: ":game", element: <GameList /> },
         { path: ":game/new", element: <NewTournament /> },
         { path: ":game/:tournamentId", element: <Tournament /> },

@@ -19,8 +19,11 @@ export function Home() {
 
   return (
     <div>
-      <p style={{ color: "var(--text-muted)" }}>{t("home.subtitle")}</p>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 12 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
+        <p style={{ color: "var(--text-muted)", margin: 0 }}>{t("home.subtitle")}</p>
+        <Link to="/help" style={{ fontWeight: 600 }}>{t("home.guide")}</Link>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 12, marginTop: 12 }}>
         {GAMES.map((g) => {
           const count = counts[g.id] ?? 0;
           return (
@@ -38,6 +41,9 @@ export function Home() {
           );
         })}
       </div>
+      <footer style={{ marginTop: 28, paddingTop: 12, borderTop: "1px solid var(--border)", textAlign: "center", color: "var(--text-muted)", fontSize: 13 }}>
+        {t("home.credit")}
+      </footer>
     </div>
   );
 }

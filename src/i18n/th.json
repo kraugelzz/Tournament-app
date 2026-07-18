@@ -11,6 +11,8 @@
   "game.boardgame": "บอร์ดเกม",
   "home.subtitle": "เลือกประเภทเกมเพื่อจัดการแข่งขัน",
   "home.activeCount": "กำลังแข่ง {{count}} รายการ",
+  "home.guide": "📖 คู่มือการใช้งาน",
+  "home.credit": "สร้างโดย Apiwit Prakat",
   "list.active": "กำลังแข่ง",
   "list.finished": "จบแล้ว",
   "list.empty": "ยังไม่มีรายการแข่งขัน",
